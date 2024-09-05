@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  emartdb:
+    build:
+      context: ./Docker-files/db
+    image: anishtarsekar/emartdb
+    container_name: emartdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - emartdbdata:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD:emartdbpass
+
+  emartcache01:
+    image: memcached
+    ports:
+      - "11211:11211"
+
+  emartmq01:
+    image: rabbitmq
+    ports:
+      - "15672:15672"
+    environment:
+    - RABBITMQ_DEFAULT_USER=guest
+    - RABBITMQ_DEFAULT_PASS=guest
+
+  emartapp:
+    build:
+      context: ./Docker-files/app
+    image: anishtarsekar/emartapp
+    container_name: emartapp
+    ports:
+      - "8080:8080"
+    
+  emartweb:
+    build:
+      context: ./Docker-files/web
+    image: anishtarsekar/emartweb
+    container_name: emartweb
+    ports:
+    - "80:80"
+
+volumes:
+  emartdbdata: {}
